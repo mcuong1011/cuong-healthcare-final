@@ -1,0 +1,61 @@
+version: '3.9'
+
+services:
+  userservice:  # ✅ Đổi từ user_service → userservice
+    build: ./user_service
+    ports:
+      - "8001:8001"
+
+  appointmentservice:
+    build: ./appointment_service
+    ports:
+      - "8002:8002"
+
+  clinicalservice:
+    build: ./clinical_service
+    ports:
+      - "8003:8003"
+
+  pharmacyservice:
+    build: ./pharmacy_service
+    ports:
+      - "8004:8004"
+
+  labservice:
+    build: ./lab_service
+    ports:
+      - "8005:8005"
+
+  insuranceservice:
+    build: ./insurance_service
+    ports:
+      - "8006:8006"
+
+  notificationservice:
+    build: ./notification_service
+    ports:
+      - "8007:8007"
+
+  gateway:
+    build: ./gateway
+    ports:
+      - "8000:8000"
+
+  virtualrobot:
+    build: ./virtualrobot_service
+    ports:
+      - "8010:8010"
+
+  chatbotservice:
+    build: ./chatbot_service
+    ports:
+      - "8020:8020"
+    environment:
+      - DOCKER_ENV=true
+      - USER_SERVICE_URL=http://userservice:8001
+      - APPOINTMENT_SERVICE_URL=http://appointmentservice:8002
+      - GATEWAY_URL=http://gateway:8000
+    depends_on:
+      - gateway
+      - userservice
+      - appointmentservice  

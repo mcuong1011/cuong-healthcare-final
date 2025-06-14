@@ -1,0 +1,14 @@
+Django==5.2
+djangorestframework==3.16.0
+numpy
+pandas
+scikit-learn
+nltk
+django-cors-headers
+requests
+tensorflow
+pyvi
+python-dotenv
+python-decouple
+openpyxl
+PyJWT==2.8.0

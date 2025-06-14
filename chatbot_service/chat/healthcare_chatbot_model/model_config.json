@@ -1,0 +1,23 @@
+{
+  "max_sequence_length": 20,
+  "vocab_size": 191,
+  "embedding_dim": 100,
+  "num_classes": 15,
+  "classes": [
+    "appointment_booking",
+    "appointment_general",
+    "appointment_specialist",
+    "diagnosis_cold_flu",
+    "emergency",
+    "goodbye",
+    "greeting",
+    "medication_info",
+    "prevention",
+    "symptom_chest_pain",
+    "symptom_cough",
+    "symptom_fever",
+    "symptom_headache",
+    "system_info",
+    "treatment_advice"
+  ]
+}

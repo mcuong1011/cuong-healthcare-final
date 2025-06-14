@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Chatbot - Tư vấn Y tế AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f8f9fa;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --chat-bg: #f8f9fa;
+            --user-msg-bg: #4a90e2;
+            --bot-msg-bg: #ffffff;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .main-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin: 20px auto;
+            max-width: 1200px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), #357abd);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .header p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+        }
+
+        .tts-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .tts-toggle {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tts-toggle:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .tts-toggle.active {
+            background: rgba(255,255,255,0.9);
+            color: var(--primary-color);
+        }
+
+        .tts-settings {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .tts-settings.show {
+            display: block;
+        }
+
+        .tts-setting-group {
+            margin-bottom: 8px;
+        }
+
+        .tts-setting-group label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 2px;
+            opacity: 0.9;
+        }
+
+        .tts-setting-group select,
+        .tts-setting-group input {
+            width: 100%;
+            padding: 4px 8px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 4px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 12px;
+        }
+
+        .chat-container {
+            height: 500px;
+            overflow-y: auto;
+            padding: 20px;
+            background: var(--chat-bg);
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .message-container {
+            display: flex;
+            margin-bottom: 15px;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background: var(--user-msg-bg);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+
+        .bot-message {
+            background: var(--bot-msg-bg);
+            color: #333;
+            border: 1px solid #e9ecef;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .speak-btn {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-size: 12px;
+        }
+
+        .speak-btn:hover {
+            background: rgba(0,0,0,0.1);
+            color: var(--primary-color);
+        }
+
+        .speak-btn.speaking {
+            color: var(--success-color);
+            animation: pulse 1s infinite;
+        }
+
+        .speak-btn.paused {
+            color: var(--warning-color);
+        }
+
+        .input-section {
+            padding: 20px;
+            background: white;
+        }
+
+        .input-group {
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .form-control {
+            border: none;
+            padding: 15px 20px;
+            font-size: 16px;
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn-send {
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            padding: 15px 25px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-send:hover {
+            background: #357abd;
+            color: white;
+        }
+
+        .admin-panel {
+            background: var(--secondary-color);
+            padding: 25px;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+
+        .admin-panel h4 {
+            color: #495057;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+
+        .url-input {
+            min-height: 100px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .status-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .sources-table {
+            margin-top: 20px;
+        }
+
+        .table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .btn-action {
+            margin: 2px;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .typing-dots {
+            display: flex;
+            align-items: center;
+        }
+
+        .typing-dots span {
+            height: 8px;
+            width: 8px;
+            background: #999;
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .tts-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        .collapsible-section {
+            margin-bottom: 20px;
+        }
+
+        .collapsible-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .collapsible-header:hover {
+            background: #357abd;
+        }
+
+        .collapsible-content {
+            display: none;
+            padding: 20px;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+        }
+
+        .debug-info {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .chat-container {
+                height: 400px;
+            }
+            
+            .message {
+                max-width: 85%;
+            }
+            
+            .stats-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .tts-controls {
+                position: relative;
+                top: auto;
+                right: auto;
+                justify-content: center;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="main-container">
+            <!-- Header -->
+            <div class="header">
+                <h1><i class="fas fa-robot"></i> Healthcare Chatbot</h1>
+                <p>Tư vấn thông tin y tế thông minh - Luôn tham khảo ý kiến bác sĩ</p>
+                
+                <!-- TTS Controls -->
+                <div class="tts-controls">
+                    <button class="tts-toggle" id="ttsToggle" title="Bật/tắt đọc tin nhắn">
+                        <i class="fas fa-volume-up"></i>
+                        <span id="ttsToggleText">TTS</span>
+                    </button>
+                    <button class="btn btn-sm" id="ttsSettingsBtn" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white;" title="Cài đặt giọng nói">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+
+                <!-- TTS Settings Panel -->
+                <div class="tts-settings" id="ttsSettings">
+                    <div class="tts-setting-group">
+                        <label for="voiceSelect">Giọng nói:</label>
+                        <select id="voiceSelect"></select>
+                    </div>
+                    <div class="tts-setting-group">
+                        <label for="rateSlider">Tốc độ: <span id="rateValue">1</span></label>
+                        <input type="range" id="rateSlider" min="0.5" max="2" step="0.1" value="1">
+                    </div>
+                    <div class="tts-setting-group">
+                        <label for="pitchSlider">Giọng điệu: <span id="pitchValue">1</span></label>
+                        <input type="range" id="pitchSlider" min="0.5" max="2" step="0.1" value="1">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Section -->
+            <div class="chat-container" id="chatContainer">
+                <div class="message-container">
+                    <div class="message bot-message">
+                        <strong>🤖 Xin chào!</strong><br>
+                        Tôi là chatbot y tế thông minh. Tôi có thể giúp bạn:
+                        <ul style="margin: 10px 0; padding-left: 20px;">
+                            <li>Tìm hiểu về các bệnh và triệu chứng</li>
+                            <li>Cung cấp thông tin về cách phòng ngừa</li>
+                            <li>Tư vấn về vắc-xin và điều trị</li>
+                        </ul>
+                        <em>⚠️ Lưu ý: Thông tin chỉ mang tính tham khảo. Vui lòng tham khảo ý kiến bác sĩ cho chẩn đoán chính xác.</em>
+                        <div class="message-time">
+                            <span><i class="fas fa-clock"></i> <span id="botTime"></span></span>
+                            <div class="message-actions">
+                                <button class="speak-btn" onclick="speakMessage(this)" title="Đọc tin nhắn">
+                                    <i class="fas fa-volume-up"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="typing-indicator" id="typingIndicator">
+                    <div class="message bot-message">
+                        <div class="typing-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Section -->
+            <div class="input-section">
+                <div class="input-group">
+                    <input type="text" id="userInput" class="form-control" 
+                           placeholder="Hỏi về triệu chứng, bệnh tật hoặc cách phòng ngừa...">
+                    <button class="btn btn-send" id="sendBtn">
+                        <i class="fas fa-paper-plane"></i> Gửi
+                    </button>
+                </div>
+                <div class="text-center mt-2">
+                    <small class="text-muted">
+                        <i class="fas fa-lightbulb"></i> 
+                        Gợi ý: "Triệu chứng cảm cúm", "Cách phòng ngừa COVID-19", "Bệnh tiểu đường"
+                    </small>
+                </div>
+            </div>
+
+            <!-- Admin Panel -->
+            <div class="admin-panel">
+                <!-- Stats Section -->
+                <div class="collapsible-section">
+                    <button class="collapsible-header" onclick="toggleSection('statsSection')">
+                        <i class="fas fa-chart-bar"></i> Thống kê Knowledge Base
+                    </button>
+                    <div class="collapsible-content" id="statsSection">
+                        <div class="stats-cards" id="statsCards">
+                            <!-- Stats will be loaded here -->
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm" onclick="loadStats()">
+                            <i class="fas fa-sync"></i> Làm mới thống kê
+                        </button>
+                    </div>
+                </div>
+
+                <!-- URL Management Section -->
+                <div class="collapsible-section">
+                    <button class="collapsible-header" onclick="toggleSection('urlSection')">
+                        <i class="fas fa-link"></i> Quản lý nguồn dữ liệu
+                    </button>
+                    <div class="collapsible-content" id="urlSection">
+                        <div class="mb-3">
+                            <label for="urlInput" class="form-label">
+                                <i class="fas fa-globe"></i> URL nguồn dữ liệu (mỗi URL một dòng):
+                            </label>
+                            <textarea id="urlInput" class="form-control url-input" rows="4"
+                                placeholder="https://vnvc.vn/cac-benh-truyen-nhiem-thuong-gap/
+https://www.vinmec.com/vi/bai-viet/cac-benh-truyen-nhiem-thuong-gap-175
+https://nhathuoclongchau.com.vn/bai-viet/cac-benh-truyen-nhiem-thuong-gap.html"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button class="btn btn-success w-100" id="updateBtn">
+                                    <i class="fas fa-download"></i> Cập nhật từ URL
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <button class="btn btn-primary w-100" id="showSourcesBtn">
+                                    <i class="fas fa-list"></i> Hiển thị nguồn hiện có
+                                </button>
+                            </div>
+                        </div>
+                        <div id="updateStatus"></div>
+                    </div>
+                </div>
+
+                <!-- Sources List Section -->
+                <div class="collapsible-section">
+                    <button class="collapsible-header" onclick="toggleSection('sourcesSection')">
+                        <i class="fas fa-database"></i> Danh sách nguồn đã lưu
+                    </button>
+                    <div class="collapsible-content" id="sourcesSection" style="display: none;">
+                        <div id="sourcesContainer">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th><i class="fas fa-link"></i> URL</th>
+                                            <th><i class="fas fa-clock"></i> Cập nhật cuối</th>
+                                            <th><i class="fas fa-hashtag"></i> Số bệnh</th>
+                                            <th><i class="fas fa-toggle-on"></i> Trạng thái</th>
+                                            <th><i class="fas fa-cogs"></i> Hành động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="sourcesTableBody">
+                                        <tr>
+                                            <td colspan="5" class="text-center">
+                                                <i class="fas fa-spinner fa-spin"></i> Đang tải...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Debug Section -->
+                <div class="collapsible-section">
+                    <button class="collapsible-header" onclick="toggleSection('debugSection')">
+                        <i class="fas fa-bug"></i> Debug & Test
+                    </button>
+                    <div class="collapsible-content" id="debugSection">
+                        <div class="mb-3">
+                            <label for="testUrl" class="form-label">Test URL extraction:</label>
+                            <div class="input-group">
+                                <input type="url" id="testUrl" class="form-control" 
+                                       placeholder="https://example.com/health-article">
+                                <button class="btn btn-warning" onclick="testUrlExtraction()">
+                                    <i class="fas fa-test-tube"></i> Test
+                                </button>
+                            </div>
+                        </div>
+                        <div id="debugOutput" class="debug-info" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TTS Notification -->
+    <div class="tts-notification" id="ttsNotification">
+        <i class="fas fa-volume-up"></i>
+        <span id="ttsNotificationText">Đang đọc tin nhắn...</span>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let sessionId = null;
+        const chatContainer = document.getElementById('chatContainer');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const typingIndicator = document.getElementById('typingIndicator');
+
+        // TTS Variables
+        let ttsEnabled = false;
+        let voices = [];
+        let selectedVoice = null;
+        let speechRate = 1;
+        let speechPitch = 1;
+        let currentSpeech = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTime();
+            loadStats();
+            userInput.focus();
+            initializeTTS();
+        });
+
+        // TTS Functions
+        function initializeTTS() {
+            if ('speechSynthesis' in window) {
+                // Load voices
+                loadVoices();
+                
+                // Voice change event
+                speechSynthesis.onvoiceschanged = loadVoices;
+                
+                // TTS Toggle
+                document.getElementById('ttsToggle').addEventListener('click', toggleTTS);
+                
+                // TTS Settings
+                document.getElementById('ttsSettingsBtn').addEventListener('click', toggleTTSSettings);
+                
+                // Voice select
+                document.getElementById('voiceSelect').addEventListener('change', function() {
+                    const selectedIndex = this.value;
+                    selectedVoice = voices[selectedIndex];
+                    saveSettings();
+                });
+                
+                // Rate slider
+                document.getElementById('rateSlider').addEventListener('input', function() {
+                    speechRate = parseFloat(this.value);
+                    document.getElementById('rateValue').textContent = speechRate;
+                    saveSettings();
+                });
+                
+                // Pitch slider
+                document.getElementById('pitchSlider').addEventListener('input', function() {
+                    speechPitch = parseFloat(this.value);
+                    document.getElementById('pitchValue').textContent = speechPitch;
+                    saveSettings();
+                });
+                
+                // Load saved settings
+                loadSettings();
+            } else {
+                console.warn('Text-to-Speech not supported in this browser');
+                document.getElementById('ttsToggle').style.display = 'none';
+                document.getElementById('ttsSettingsBtn').style.display = 'none';
+            }
+        }
+
+        function loadVoices() {
+            voices = speechSynthesis.getVoices();
+            const voiceSelect = document.getElementById('voiceSelect');
+            voiceSelect.innerHTML = '';
+            
+            // Filter Vietnamese voices or add fallback
+            const vietnameseVoices = voices.filter(voice => 
+                voice.lang.includes('vi') || 
+                voice.name.toLowerCase().includes('vietnamese') ||
+                voice.name.toLowerCase().includes('vietnam')
+            );
+            
+            // If no Vietnamese voices, use English voices as fallback
+            const availableVoices = vietnameseVoices.length > 0 ? vietnameseVoices : voices;
+            
+            availableVoices.forEach((voice, index) => {
+                const option = document.createElement('option');
+                option.value = voices.indexOf(voice);
+                option.textContent = `${voice.name} (${voice.lang})`;
+                voiceSelect.appendChild(option);
+            });
+            
+            // Set default voice (prefer Vietnamese)
+            if (vietnameseVoices.length > 0) {
+                selectedVoice = vietnameseVoices[0];
+                voiceSelect.value = voices.indexOf(vietnameseVoices[0]);
+            } else if (voices.length > 0) {
+                selectedVoice = voices[0];
+                voiceSelect.value = 0;
+            }
+        }
+
+        function toggleTTS() {
+            ttsEnabled = !ttsEnabled;
+            const toggle = document.getElementById('ttsToggle');
+            const toggleText = document.getElementById('ttsToggleText');
+            
+            if (ttsEnabled) {
+                toggle.classList.add('active');
+                toggleText.textContent = 'ON';
+                showTTSNotification('Đã bật chế độ đọc tin nhắn');
+            } else {
+                toggle.classList.remove('active');
+                toggleText.textContent = 'OFF';
+                stopSpeaking();
+                showTTSNotification('Đã tắt chế độ đọc tin nhắn');
+            }
+            
+            saveSettings();
+        }
+
+        function toggleTTSSettings() {
+            const settings = document.getElementById('ttsSettings');
+            settings.classList.toggle('show');
+        }
+
+        function speakMessage(button) {
+            const messageElement = button.closest('.message');
+            const messageText = extractTextFromMessage(messageElement);
+            
+            if (currentSpeech && currentSpeech.speaking) {
+                stopSpeaking();
+                return;
+            }
+            
+            speakText(messageText, button);
+        }
+
+        function speakText(text, button = null) {
+            if (!('speechSynthesis' in window)) {
+                showTTSNotification('Trình duyệt không hỗ trợ Text-to-Speech');
+                return;
+            }
+
+            // Stop any current speech
+            stopSpeaking();
+            
+            // Clean text for better pronunciation
+            const cleanText = cleanTextForSpeech(text);
+            
+            currentSpeech = new SpeechSynthesisUtterance(cleanText);
+            
+            // Set voice and parameters
+            if (selectedVoice) {
+                currentSpeech.voice = selectedVoice;
+            }
+            currentSpeech.rate = speechRate;
+            currentSpeech.pitch = speechPitch;
+            currentSpeech.volume = 1;
+            
+            // Event handlers
+            currentSpeech.onstart = function() {
+                if (button) {
+                    button.classList.add('speaking');
+                    button.innerHTML = '<i class="fas fa-stop"></i>';
+                    button.title = 'Dừng đọc';
+                }
+                showTTSNotification('Đang đọc tin nhắn...');
+            };
+            
+            currentSpeech.onend = function() {
+                if (button) {
+                    button.classList.remove('speaking', 'paused');
+                    button.innerHTML = '<i class="fas fa-volume-up"></i>';
+                    button.title = 'Đọc tin nhắn';
+                }
+                hideTTSNotification();
+                currentSpeech = null;
+            };
+            
+            currentSpeech.onerror = function(event) {
+                console.error('Speech synthesis error:', event);
+                if (button) {
+                    button.classList.remove('speaking', 'paused');
+                    button.innerHTML = '<i class="fas fa-volume-up"></i>';
+                    button.title = 'Đọc tin nhắn';
+                }
+                showTTSNotification('Lỗi khi đọc tin nhắn', 'error');
+                currentSpeech = null;
+            };
+            
+            speechSynthesis.speak(currentSpeech);
+        }
+
+        function stopSpeaking() {
+            if (speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+            }
+            
+            // Reset all speak buttons
+            document.querySelectorAll('.speak-btn').forEach(btn => {
+                btn.classList.remove('speaking', 'paused');
+                btn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                btn.title = 'Đọc tin nhắn';
+            });
+            
+            hideTTSNotification();
+            currentSpeech = null;
+        }
+
+        function cleanTextForSpeech(text) {
+            // Remove HTML tags
+            text = text.replace(/<[^>]*>/g, ' ');
+            
+            // Replace markdown-style formatting
+            text = text.replace(/\*\*(.*?)\*\*/g, '$1');
+            text = text.replace(/\*(.*?)\*/g, '$1');
+            
+            // Replace icons and special characters
+            text = text.replace(/🤖|⚠️|✅|❌|📊|🏥|💊|🩺/g, '');
+            
+            // Clean up multiple spaces
+            text = text.replace(/\s+/g, ' ');
+            
+            // Replace common medical abbreviations with full words
+            const replacements = {
+                'COVID-19': 'cô vít mười chín',
+                'HIV': 'H I V',
+                'AIDS': 'A I D S',
+                'CT': 'C T',
+                'MRI': 'M R I',
+                'EKG': 'E K G',
+                'ECG': 'E C G',
+                'WHO': 'tổ chức y tế thế giới',
+                'ICU': 'khoa hồi sức cấp cứu'
+            };
+            
+            for (const [abbr, full] of Object.entries(replacements)) {
+                text = text.replace(new RegExp(abbr, 'gi'), full);
+            }
+            
+            return text.trim();
+        }
+
+        function extractTextFromMessage(messageElement) {
+            // Clone element to avoid modifying original
+            const clone = messageElement.cloneNode(true);
+            
+            // Remove time and action elements
+            const timeElement = clone.querySelector('.message-time');
+            if (timeElement) timeElement.remove();
+            
+            const actionsElement = clone.querySelector('.message-actions');
+            if (actionsElement) actionsElement.remove();
+            
+            return clone.textContent || clone.innerText || '';
+        }
+
+        function showTTSNotification(message, type = 'info') {
+            const notification = document.getElementById('ttsNotification');
+            const notificationText = document.getElementById('ttsNotificationText');
+            
+            notificationText.textContent = message;
+            notification.style.display = 'block';
+            
+            if (type === 'error') {
+                notification.style.background = '#dc3545';
+            } else {
+                notification.style.background = '#4a90e2';
+            }
+            
+            // Auto hide after 3 seconds if not speaking
+            setTimeout(() => {
+                if (!currentSpeech || !currentSpeech.speaking) {
+                    hideTTSNotification();
+                }
+            }, 3000);
+        }
+
+        function hideTTSNotification() {
+            const notification = document.getElementById('ttsNotification');
+            notification.style.display = 'none';
+        }
+
+        function saveSettings() {
+            const settings = {
+                ttsEnabled: ttsEnabled,
+                selectedVoiceIndex: selectedVoice ? voices.indexOf(selectedVoice) : 0,
+                speechRate: speechRate,
+                speechPitch: speechPitch
+            };
+            localStorage.setItem('healthchatbot_tts_settings', JSON.stringify(settings));
+        }
+
+        function loadSettings() {
+            try {
+                const saved = localStorage.getItem('healthchatbot_tts_settings');
+                if (saved) {
+                    const settings = JSON.parse(saved);
+                    
+                    if (settings.ttsEnabled) {
+                        ttsEnabled = true;
+                        document.getElementById('ttsToggle').classList.add('active');
+                        document.getElementById('ttsToggleText').textContent = 'ON';
+                    }
+                    
+                    if (settings.selectedVoiceIndex && voices[settings.selectedVoiceIndex]) {
+                        selectedVoice = voices[settings.selectedVoiceIndex];
+                        document.getElementById('voiceSelect').value = settings.selectedVoiceIndex;
+                    }
+                    
+                    if (settings.speechRate) {
+                        speechRate = settings.speechRate;
+                        document.getElementById('rateSlider').value = speechRate;
+                        document.getElementById('rateValue').textContent = speechRate;
+                    }
+                    
+                    if (settings.speechPitch) {
+                        speechPitch = settings.speechPitch;
+                        document.getElementById('pitchSlider').value = speechPitch;
+                        document.getElementById('pitchValue').textContent = speechPitch;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading TTS settings:', error);
+            }
+        }
+
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('botTime').textContent = now.toLocaleTimeString('vi-VN');
+        }
+
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const isVisible = section.style.display !== 'none';
+            section.style.display = isVisible ? 'none' : 'block';
+        }
+
+        function showTyping() {
+            typingIndicator.style.display = 'flex';
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function hideTyping() {
+            typingIndicator.style.display = 'none';
+        }
+
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            // Show user message
+            addMessage(message, 'user');
+            userInput.value = '';
+
+            // Show typing indicator
+            showTyping();
+
+            // Send to API
+            fetch('/api/chatbot/message/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    message: message,
+                    session_id: sessionId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideTyping();
+                sessionId = data.session_id;
+                addMessage(data.response, 'bot');
+            })
+            .catch(error => {
+                hideTyping();
+                console.error('Error:', error);
+                addMessage('Xin lỗi, đã xảy ra lỗi khi xử lý tin nhắn của bạn. Vui lòng thử lại.', 'bot');
+            });
+        }
+
+        function addMessage(message, sender) {
+            const messageContainer = document.createElement('div');
+            messageContainer.classList.add('message-container');
+
+            const div = document.createElement('div');
+            div.classList.add('message');
+            div.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+
+            // Format message with markdown-like formatting
+            let formattedMessage = message.replace(/\n/g, '<br>');
+            formattedMessage = formattedMessage.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            div.innerHTML = formattedMessage;
+
+            // Add timestamp and actions
+            const timeDiv = document.createElement('div');
+            timeDiv.classList.add('message-time');
+            
+            const timeSpan = document.createElement('span');
+            timeSpan.innerHTML = `<i class="fas fa-clock"></i> ${new Date().toLocaleTimeString('vi-VN')}`;
+            
+            timeDiv.appendChild(timeSpan);
+            
+            // Add speak button for bot messages
+            if (sender === 'bot') {
+                const actionsDiv = document.createElement('div');
+                actionsDiv.classList.add('message-actions');
+                
+                const speakButton = document.createElement('button');
+                speakButton.classList.add('speak-btn');
+                speakButton.innerHTML = '<i class="fas fa-volume-up"></i>';
+                speakButton.title = 'Đọc tin nhắn';
+                speakButton.onclick = function() { speakMessage(this); };
+                
+                actionsDiv.appendChild(speakButton);
+                timeDiv.appendChild(actionsDiv);
+            }
+            
+            div.appendChild(timeDiv);
+            messageContainer.appendChild(div);
+            chatContainer.appendChild(messageContainer);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            // Auto-speak if TTS is enabled and this is a bot message
+            if (sender === 'bot' && ttsEnabled) {
+                setTimeout(() => {
+                    const speakBtn = messageContainer.querySelector('.speak-btn');
+                    if (speakBtn) {
+                        speakMessage(speakBtn);
+                    }
+                }, 500); // Small delay to let the message render
+            }
+        }
+
+        function loadStats() {
+            fetch('/api/chatbot/stats/')
+            .then(response => response.json())
+            .then(data => {
+                const statsCards = document.getElementById('statsCards');
+                statsCards.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-number">${data.total_diseases || 0}</div>
+                        <div class="stat-label">Bệnh</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${data.total_symptoms || 0}</div>
+                        <div class="stat-label">Triệu chứng</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${data.total_sessions || 0}</div>
+                        <div class="stat-label">Phiên chat</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${data.active_sources || 0}</div>
+                        <div class="stat-label">Nguồn hoạt động</div>
+                    </div>
+                `;
+            })
+            .catch(error => {
+                console.error('Error loading stats:', error);
+            });
+        }
+
+        function loadSources() {
+            fetch('/api/sources/')
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.getElementById('sourcesTableBody');
+                tbody.innerHTML = '';
+
+                if (data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center">Chưa có nguồn nào</td></tr>';
+                    return;
+                }
+
+                data.forEach(source => {
+                    const row = document.createElement('tr');
+                    
+                    const shortUrl = source.url.length > 50 ? source.url.substring(0, 50) + '...' : source.url;
+                    const lastUpdated = source.last_updated ? 
+                        new Date(source.last_updated).toLocaleString('vi-VN') : 
+                        'Chưa cập nhật';
+                    const statusBadge = source.active ? 
+                        '<span class="badge bg-success">Hoạt động</span>' : 
+                        '<span class="badge bg-secondary">Tạm dừng</span>';
+
+                    row.innerHTML = `
+                        <td title="${source.url}">${shortUrl}</td>
+                        <td>${lastUpdated}</td>
+                        <td><span class="badge bg-primary">${source.success_count}</span></td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary btn-action" onclick="updateSource('${source.url}')">
+                                <i class="fas fa-sync"></i>
+                            </button>
+                            <button class="btn btn-sm btn-warning btn-action" onclick="toggleSource('${source.url}')">
+                                <i class="fas fa-toggle-${source.active ? 'on' : 'off'}"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger btn-action" onclick="deleteSource('${source.url}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Error loading sources:', error);
+                document.getElementById('sourcesTableBody').innerHTML = 
+                    '<tr><td colspan="5" class="text-center text-danger">Lỗi khi tải danh sách nguồn</td></tr>';
+            });
+        }
+
+        function updateSource(url) {
+            showUpdateStatus('info', 'Đang cập nhật từ nguồn...');
+            
+            fetch('/api/chatbot/update_knowledge/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ urls: [url] })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showUpdateStatus('success', data.message);
+                    loadSources();
+                    loadStats();
+                } else {
+                    showUpdateStatus('danger', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showUpdateStatus('danger', 'Đã xảy ra lỗi khi cập nhật từ nguồn');
+            });
+        }
+
+        function deleteSource(url) {
+            if (!confirm(`Bạn có chắc chắn muốn xóa nguồn "${url}"?`)) {
+                return;
+            }
+
+            fetch('/api/sources/delete/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ url: url })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showUpdateStatus('success', data.message);
+                    loadSources();
+                } else {
+                    showUpdateStatus('danger', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showUpdateStatus('danger', 'Đã xảy ra lỗi khi xóa nguồn');
+            });
+        }
+
+        function toggleSource(url) {
+            fetch('/api/sources/toggle_active/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ url: url })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showUpdateStatus('info', data.message);
+                    loadSources();
+                } else {
+                    showUpdateStatus('danger', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showUpdateStatus('danger', 'Đã xảy ra lỗi khi thay đổi trạng thái nguồn');
+            });
+        }
+
+        function testUrlExtraction() {
+            const testUrl = document.getElementById('testUrl').value.trim();
+            if (!testUrl) {
+                alert('Vui lòng nhập URL để test');
+                return;
+            }
+
+            const debugOutput = document.getElementById('debugOutput');
+            debugOutput.style.display = 'block';
+            debugOutput.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang test extraction...';
+
+            fetch('/api/chatbot/test_extraction/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ url: testUrl })
+            })
+            .then(response => response.json())
+            .then(data => {
+                debugOutput.innerHTML = `
+                    <strong>URL:</strong> ${testUrl}<br>
+                    <strong>Status:</strong> ${data.success ? 'Success' : 'Failed'}<br>
+                    <strong>Diseases found:</strong> ${data.diseases_count || 0}<br>
+                    <strong>Details:</strong><br>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            })
+            .catch(error => {
+                debugOutput.innerHTML = `<strong>Error:</strong> ${error.message}`;
+            });
+        }
+
+        function showUpdateStatus(type, message) {
+            const statusDiv = document.getElementById('updateStatus');
+            statusDiv.innerHTML = `<div class="alert alert-${type} mt-3">${message}</div>`;
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                statusDiv.innerHTML = '';
+            }, 5000);
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Event listeners
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', event => {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Stop speech when user starts typing
+        userInput.addEventListener('focus', () => {
+            if (currentSpeech && currentSpeech.speaking) {
+                stopSpeaking();
+            }
+        });
+
+        document.getElementById('updateBtn').addEventListener('click', () => {
+            const urls = document.getElementById('urlInput').value.trim().split('\n').filter(url => url.trim() !== '');
+            
+            if (urls.length === 0) {
+                showUpdateStatus('warning', 'Vui lòng nhập ít nhất một URL');
+                return;
+            }
+
+            showUpdateStatus('info', 'Đang cập nhật knowledge base...');
+
+            fetch('/api/chatbot/update_knowledge/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ urls: urls })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showUpdateStatus('success', data.message);
+                    loadSources();
+                    loadStats();
+                } else {
+                    showUpdateStatus('danger', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showUpdateStatus('danger', 'Đã xảy ra lỗi khi cập nhật knowledge base');
+            });
+        });
+
+        document.getElementById('showSourcesBtn').addEventListener('click', () => {
+            const sourcesSection = document.getElementById('sourcesSection');
+            const isVisible = sourcesSection.style.display !== 'none';
+            
+            if (!isVisible) {
+                loadSources();
+                sourcesSection.style.display = 'block';
+            } else {
+                sourcesSection.style.display = 'none';
+            }
+        });
+
+        // Cleanup speech on page unload
+        window.addEventListener('beforeunload', () => {
+            if (speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+            }
+        });
+    </script>
+</body>
+</html>

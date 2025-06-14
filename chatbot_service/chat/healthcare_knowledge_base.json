@@ -1,0 +1,441 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": [
+        "Hi",
+        "Hello",
+        "Good morning",
+        "Good afternoon",
+        "Hey",
+        "Hi there",
+        "Greetings",
+        "What's up",
+        "How are you",
+        "Hello doctor",
+        "Hi doc"
+      ],
+      "responses": [
+        "Hello! I'm your healthcare assistant. How can I help you today?",
+        "Hi there! I'm here to help with your healthcare needs. What can I do for you?",
+        "Good day! I'm your medical assistant. How may I assist you?",
+        "Hello! I'm ready to help with medical questions, symptoms, or appointments."
+      ]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": [
+        "Bye",
+        "Goodbye",
+        "See you later",
+        "Thanks",
+        "Thank you",
+        "That's all",
+        "Have a good day",
+        "Take care",
+        "Farewell",
+        "Until next time"
+      ],
+      "responses": [
+        "Goodbye! Take care of your health. Feel free to return anytime!",
+        "Take care! Remember to follow your treatment plan.",
+        "Goodbye! Wishing you good health. Don't hesitate to ask if you need help!",
+        "See you later! Stay healthy and safe!"
+      ]
+    },
+    {
+      "tag": "symptom_fever",
+      "patterns": [
+        "I have fever",
+        "I'm running a temperature",
+        "My body temperature is high",
+        "I feel feverish",
+        "I have high temperature",
+        "Fever symptoms",
+        "I'm burning up",
+        "Temperature above normal",
+        "Hot and cold flashes"
+      ],
+      "responses": [
+        "Fever can indicate infection or illness. Monitor your temperature and stay hydrated. If fever exceeds 101°F (38.3°C) or persists for more than 3 days, please consult a doctor.",
+        "For fever management: Rest, drink plenty of fluids, use cool compresses. Seek medical attention if temperature is very high or you have other concerning symptoms.",
+        "Fever is your body's response to infection. Take acetaminophen or ibuprofen as directed, rest, and monitor symptoms. Contact healthcare provider if fever worsens."
+      ],
+      "medical_info": {
+        "condition": "Fever",
+        "symptoms": [
+          "High body temperature",
+          "Chills",
+          "Sweating",
+          "Headache",
+          "Muscle aches"
+        ],
+        "possible_causes": [
+          "Viral infection",
+          "Bacterial infection",
+          "Heat exhaustion",
+          "Medication side effects"
+        ],
+        "treatment": [
+          "Rest",
+          "Hydration",
+          "Fever reducers (acetaminophen/ibuprofen)",
+          "Cool compresses"
+        ],
+        "when_to_see_doctor": [
+          "Fever above 103°F (39.4°C)",
+          "Fever lasting more than 3 days",
+          "Difficulty breathing",
+          "Severe headache"
+        ]
+      }
+    },
+    {
+      "tag": "symptom_headache",
+      "patterns": [
+        "I have a headache",
+        "My head hurts",
+        "Severe headache",
+        "Migraine",
+        "Head pain",
+        "Throbbing head",
+        "Tension headache",
+        "Cluster headache",
+        "Head is pounding",
+        "Sharp pain in head"
+      ],
+      "responses": [
+        "Headaches can have various causes. Try resting in a quiet, dark room, apply cold or warm compress, and stay hydrated. If severe or persistent, consult a doctor.",
+        "For headache relief: Rest, hydration, over-the-counter pain relievers, and stress management. Seek medical attention for sudden, severe headaches.",
+        "Common headache remedies include rest, hydration, pain medication, and avoiding triggers. Contact healthcare provider for recurring or severe headaches."
+      ],
+      "medical_info": {
+        "condition": "Headache",
+        "types": [
+          "Tension headache",
+          "Migraine",
+          "Cluster headache",
+          "Sinus headache"
+        ],
+        "symptoms": [
+          "Head pain",
+          "Throbbing",
+          "Sensitivity to light",
+          "Nausea"
+        ],
+        "treatment": [
+          "Rest",
+          "Pain relievers",
+          "Cold/warm compress",
+          "Hydration",
+          "Stress management"
+        ],
+        "triggers": [
+          "Stress",
+          "Lack of sleep",
+          "Dehydration",
+          "Certain foods",
+          "Hormonal changes"
+        ]
+      }
+    },
+    {
+      "tag": "symptom_cough",
+      "patterns": [
+        "I have a cough",
+        "Persistent cough",
+        "Dry cough",
+        "Wet cough",
+        "Coughing up phlegm",
+        "Chronic cough",
+        "Whooping cough",
+        "Can't stop coughing",
+        "Productive cough",
+        "Hacking cough"
+      ],
+      "responses": [
+        "Coughs can be due to infections, allergies, or irritants. Stay hydrated, use honey for soothing, and rest. See a doctor if cough persists over 2 weeks or has blood.",
+        "For cough relief: Honey, warm fluids, humidifier, avoid irritants. Seek medical care for persistent, bloody, or severe coughs.",
+        "Cough treatment depends on cause. Try throat lozenges, steam inhalation, and rest. Consult healthcare provider for concerning symptoms."
+      ],
+      "medical_info": {
+        "condition": "Cough",
+        "types": [
+          "Dry cough",
+          "Productive cough",
+          "Acute cough",
+          "Chronic cough"
+        ],
+        "causes": [
+          "Viral infection",
+          "Bacterial infection",
+          "Allergies",
+          "Asthma",
+          "GERD"
+        ],
+        "treatment": [
+          "Honey",
+          "Warm fluids",
+          "Humidifier",
+          "Cough suppressants",
+          "Rest"
+        ],
+        "red_flags": [
+          "Blood in cough",
+          "Persistent over 2 weeks",
+          "Difficulty breathing",
+          "High fever"
+        ]
+      }
+    },
+    {
+      "tag": "symptom_chest_pain",
+      "patterns": [
+        "Chest pain",
+        "My chest hurts",
+        "Sharp chest pain",
+        "Tight chest",
+        "Chest pressure",
+        "Heart pain",
+        "Burning chest",
+        "Chest discomfort",
+        "Pain in chest area",
+        "Chest tightness"
+      ],
+      "responses": [
+        "Chest pain can be serious and requires immediate medical attention, especially if accompanied by shortness of breath, sweating, or radiating pain. Call emergency services if severe.",
+        "EMERGENCY: Chest pain can indicate heart problems. Seek immediate medical care if you experience chest pain with shortness of breath, nausea, or sweating.",
+        "Chest pain needs evaluation. If sudden, severe, or associated with breathing difficulty, call 911. For mild chest pain, monitor and consult healthcare provider."
+      ],
+      "medical_info": {
+        "condition": "Chest Pain",
+        "serious_causes": [
+          "Heart attack",
+          "Pulmonary embolism",
+          "Aortic dissection",
+          "Pneumothorax"
+        ],
+        "common_causes": [
+          "Muscle strain",
+          "Acid reflux",
+          "Anxiety",
+          "Costochondritis"
+        ],
+        "emergency_signs": [
+          "Crushing chest pain",
+          "Radiating to arm/jaw",
+          "Shortness of breath",
+          "Sweating",
+          "Nausea"
+        ],
+        "action": "SEEK IMMEDIATE MEDICAL ATTENTION"
+      }
+    },
+    {
+      "tag": "appointment_booking",
+      "patterns": [
+        "Book appointment",
+        "Schedule appointment",
+        "I need to see a doctor",
+        "Make appointment",
+        "Reserve appointment",
+        "Book consultation",
+        "Set up appointment",
+        "Schedule visit",
+        "Need appointment",
+        "Can I book a doctor visit",
+        "Schedule checkup"
+      ],
+      "responses": [
+        "I can help you book an appointment. Please specify the type of appointment you need (general checkup, specialist consultation, emergency) and your preferred date/time.",
+        "To book an appointment, I'll need: 1) Type of consultation 2) Preferred doctor/specialty 3) Date and time preference 4) Reason for visit",
+        "Let me help you schedule an appointment. What type of medical consultation do you need, and when would you prefer to visit?"
+      ]
+    },
+    {
+      "tag": "appointment_general",
+      "patterns": [
+        "General checkup",
+        "Regular checkup",
+        "Health checkup",
+        "Annual physical",
+        "Routine examination",
+        "General consultation",
+        "Basic checkup",
+        "Health screening",
+        "Physical exam"
+      ],
+      "responses": [
+        "Great! I can help you schedule a general checkup. These typically include vital signs, basic blood work, and overall health assessment. When would you like to schedule this?",
+        "General checkups are important for preventive care. I'll help you book with a general practitioner. What's your preferred date and time?",
+        "Excellent choice for maintaining your health. General checkups help detect issues early. Let me help you find an available slot."
+      ]
+    },
+    {
+      "tag": "appointment_specialist",
+      "patterns": [
+        "Specialist appointment",
+        "See a specialist",
+        "Cardiology appointment",
+        "Dermatology appointment",
+        "Orthopedic appointment",
+        "Neurology appointment",
+        "Gynecology appointment",
+        "Ophthalmology appointment",
+        "ENT appointment",
+        "Psychiatry appointment",
+        "Endocrinology appointment"
+      ],
+      "responses": [
+        "I can help you book a specialist appointment. Which specialty do you need? (Cardiology, Dermatology, Orthopedics, Neurology, etc.)",
+        "Specialist consultations require specific expertise. Please specify the medical specialty you need, and I'll check availability.",
+        "For specialist appointments, I'll need to know the specific field of medicine. What type of specialist are you looking for?"
+      ]
+    },
+    {
+      "tag": "system_info",
+      "patterns": [
+        "About the hospital",
+        "Hospital information",
+        "System information",
+        "Healthcare system",
+        "Hospital services",
+        "What services do you offer",
+        "Tell me about the hospital",
+        "Hospital details",
+        "Medical services"
+      ],
+      "responses": [
+        "Our healthcare system offers comprehensive medical services including emergency care, general medicine, specialist consultations, diagnostics, surgery, and preventive care. We're committed to providing quality healthcare 24/7.",
+        "We provide: Emergency services, Outpatient clinics, Inpatient care, Diagnostic imaging, Laboratory services, Pharmacy, Specialist consultations, and Preventive health programs.",
+        "Our healthcare facility features state-of-the-art equipment, experienced medical professionals, and comprehensive services from emergency care to specialized treatments."
+      ]
+    },
+    {
+      "tag": "emergency",
+      "patterns": [
+        "Emergency",
+        "This is urgent",
+        "I need immediate help",
+        "Emergency situation",
+        "Call 911",
+        "Urgent medical help",
+        "Life threatening",
+        "Serious condition",
+        "Critical situation"
+      ],
+      "responses": [
+        "EMERGENCY: If this is a life-threatening emergency, please call 911 immediately or go to the nearest emergency room. For urgent but non-life-threatening issues, visit our urgent care center.",
+        "For medical emergencies, call 911 immediately. If you're experiencing chest pain, difficulty breathing, severe bleeding, or loss of consciousness, seek immediate medical attention.",
+        "URGENT: Call emergency services (911) for immediate life-threatening situations. Our emergency department is available 24/7 for critical care."
+      ]
+    },
+    {
+      "tag": "diagnosis_cold_flu",
+      "patterns": [
+        "I think I have a cold",
+        "Flu symptoms",
+        "Cold symptoms",
+        "Runny nose and cough",
+        "Sneezing and congestion",
+        "Body aches and fever",
+        "Sore throat and tiredness",
+        "Common cold",
+        "Influenza symptoms"
+      ],
+      "responses": [
+        "Based on your symptoms, you might have a cold or flu. Cold symptoms include runny nose, sneezing, mild cough. Flu typically has fever, body aches, fatigue. Rest, fluids, and symptom management help recovery.",
+        "Cold vs Flu: Colds develop gradually with nasal symptoms. Flu starts suddenly with fever, chills, body aches. Both need rest, hydration, and symptomatic treatment. See doctor if symptoms worsen.",
+        "For cold/flu: Rest, plenty of fluids, throat lozenges, decongestants if needed. Flu may benefit from antiviral medication if caught early. Monitor for complications."
+      ],
+      "medical_info": {
+        "conditions": [
+          "Common Cold",
+          "Influenza"
+        ],
+        "cold_symptoms": [
+          "Runny nose",
+          "Sneezing",
+          "Mild cough",
+          "Sore throat",
+          "Low-grade fever"
+        ],
+        "flu_symptoms": [
+          "High fever",
+          "Body aches",
+          "Fatigue",
+          "Headache",
+          "Dry cough"
+        ],
+        "treatment": [
+          "Rest",
+          "Hydration",
+          "Symptom relief medications",
+          "Antiviral drugs (flu)"
+        ],
+        "prevention": [
+          "Hand hygiene",
+          "Vaccination",
+          "Avoid close contact with sick people"
+        ]
+      }
+    },
+    {
+      "tag": "treatment_advice",
+      "patterns": [
+        "Treatment options",
+        "How to treat",
+        "What medication",
+        "Treatment plan",
+        "Therapy options",
+        "Healing process",
+        "Recovery advice",
+        "Medication recommendations",
+        "Treatment protocol"
+      ],
+      "responses": [
+        "Treatment plans should always be personalized by healthcare professionals. I can provide general information, but please consult your doctor for specific treatment recommendations.",
+        "Treatment depends on proper diagnosis. While I can share general health information, your healthcare provider will create the best treatment plan for your specific condition.",
+        "For specific treatment advice, please consult with a qualified healthcare professional who can evaluate your condition and medical history thoroughly."
+      ]
+    },
+    {
+      "tag": "medication_info",
+      "patterns": [
+        "Medication information",
+        "Drug information",
+        "Side effects",
+        "How to take medicine",
+        "Dosage information",
+        "Drug interactions",
+        "Prescription information",
+        "Over-the-counter drugs",
+        "Medicine safety"
+      ],
+      "responses": [
+        "For medication information, dosages, and interactions, please consult your pharmacist or healthcare provider. They can provide accurate, personalized information based on your medical history.",
+        "Medication safety is crucial. Always follow prescription instructions, check for interactions with your pharmacist, and report any side effects to your healthcare provider.",
+        "For specific drug information, dosing, and safety, speak with your doctor or pharmacist who can provide guidance based on your individual health needs."
+      ]
+    },
+    {
+      "tag": "prevention",
+      "patterns": [
+        "How to prevent",
+        "Disease prevention",
+        "Healthy lifestyle",
+        "Preventive measures",
+        "Stay healthy",
+        "Avoid getting sick",
+        "Health maintenance",
+        "Wellness tips",
+        "Prevention strategies"
+      ],
+      "responses": [
+        "Prevention is key to good health: Regular exercise, balanced diet, adequate sleep, stress management, regular checkups, vaccinations, and good hygiene practices.",
+        "Healthy lifestyle choices prevent many diseases: Eat nutritious foods, stay active, don't smoke, limit alcohol, manage stress, get enough sleep, and stay up-to-date with preventive screenings.",
+        "Prevention strategies: Maintain healthy weight, exercise regularly, eat fruits and vegetables, practice good hygiene, get vaccinated, manage chronic conditions, and have regular health checkups."
+      ]
+    }
+  ]
+}

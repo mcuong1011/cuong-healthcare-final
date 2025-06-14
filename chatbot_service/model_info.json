@@ -1,0 +1,7 @@
+{
+  "model_type": "Logistic Regression",
+  "accuracy": 0.4166666666666667,
+  "training_date": "2025-05-28T21:10:27.478436",
+  "num_intents": 14,
+  "num_patterns": 118
+}
