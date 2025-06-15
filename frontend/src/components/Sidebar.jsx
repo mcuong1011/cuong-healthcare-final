@@ -11,8 +11,6 @@ const patientLinks = [
   { to: '/dashboard',           icon: DashboardIconUrl, label: 'Dashboard' },
   { to: '/appointments',        icon: CalendarIconUrl,  label: 'My Appointments' },
   { to: '/dashboard/reports',   icon: ReportsIconUrl,   label: 'Medical Records' },
-  { to: '/dashboard/vr',        icon: AnalyticsIconUrl, label: 'Virtual Robot' },
-  { to: '/help',                icon: HelpIconUrl,      label: 'Help' },
 ];
 
 const doctorLinks = [
